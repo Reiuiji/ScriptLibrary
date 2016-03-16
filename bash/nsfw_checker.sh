@@ -7,7 +7,12 @@
 #version      :1
 #usage        :bash nsfw_checker.sh <Image URL>
 
-TOKKEN=ITGIrfDQrqIWgbF94b0JEpTzDijxJb
+TOKKEN=
+if [ -z ${TOKKEN:+x} ]
+then
+    echo "Need a token from clarifai.com"
+    exit
+fi
 
 URL=$1
 
@@ -22,10 +27,10 @@ PROBS="$(echo $RESULTS | grep -Po '(?<="probs": \[)[^]]*')"
 
 if [ -z ${CLASSES:+x} ]
 then
-	echo "Status Failed"
-	exit -1
+    echo "Status Failed"
+    exit -1
 else
-	echo "Status OK"
+    echo "Status OK"
 fi
 
 CARR=( $(echo $CLASSES | cut -d "\"" -f2,4 --output-delimiter=" ") )
@@ -38,7 +43,7 @@ PARR=( $(echo $PROBS | tr "," " ") )
 
 if [ ${CARR[0]} == "sfw" ]
 then
-	echo "Safe for Work: ${PARR[0]}"
+    echo "Safe for Work: ${PARR[0]}"
 else
-	echo "Not Safe for Work: ${PARR[0]}"
+    echo "Not Safe for Work: ${PARR[0]}"
 fi
